@@ -65,7 +65,7 @@ Build an MVP for a House Association (Húsfélag) management system that allows 
 ### Project Structure with Test Integration
 
 ```
-ha-management-mvp/
+ha_management_mvp/
 ├── apps/
 │   ├── api/                          # Node.js API
 │   │   ├── src/
