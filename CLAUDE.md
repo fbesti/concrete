@@ -33,7 +33,7 @@ Avoid building functionality on speculation. Implement features only when they a
 Follow strict vertical slice architecture with tests living next to the code they test:
 
 ```
-ha-management-mvp/
+src/
 ├── apps/
 │   ├── api/                          # Node.js API
 │   │   ├── src/
@@ -98,9 +98,75 @@ ha-management-mvp/
 └── README.md
 ```
 
-## 🛠️ Development Environment
+### Package Manager & Node.js Configuration
 
-## 📋 Style & Conventions
+#### Root package.json
+```json
+{
+  "name": "ha-management-mvp",
+  "private": true,
+  "engines": {
+    "node": ">=22.18.0 <23.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.1",
+  "scripts": {
+    "prepare": "husky install",
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "test:unit": "pnpm --filter api test:unit",
+    "test:integration": "pnpm --filter api test:integration", 
+    "test:e2e": "playwright test",
+    "test:all": "pnpm run test && pnpm run test:e2e",
+    "lint": "pnpm -r lint",
+    "lint:fix": "pnpm -r lint:fix",
+    "format": "pnpm -r format",
+    "type-check": "pnpm -r type-check"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "lint-staged": {
+    "apps/web/**/*.{ts,tsx}": [
+      "pnpm --filter web lint:fix",
+      "pnpm --filter web format"
+    ],
+    "apps/api/**/*.{ts}": [
+      "pnpm --filter api lint:fix", 
+      "pnpm --filter api format"
+    ],
+    "**/*.{json,md}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.0.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^14.0.1",
+    "@playwright/test": "^1.40.0"
+  }
+}
+```
+
+#### pnpm-workspace.yaml
+```yaml
+packages:
+  - 'apps/*'
+  - 'packages/*'
+```
+
+#### .nvmrc
+```
+22.18.0
+```
 
 ### Code Style Guidelines
 
@@ -132,45 +198,113 @@ ha-management-mvp/
 
 ### Code Quality Tools
 
-#### Linting & Formatting
-```json
-{
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-airbnb-typescript": "^17.1.0",
-    "eslint-config-google": "^0.14.0",
-    "eslint-config-prettier": "^9.0.0",
-    "prettier": "^3.0.0",
-    "husky": "^8.0.3",
-    "lint-staged": "^14.0.1"
+### ESLint Configuration
+
+#### Frontend (.eslintrc.js)
+```javascript
+module.exports = {
+  extends: [
+    'next/core-web-vitals',
+    '@typescript-eslint/recommended',
+    'airbnb',
+    'airbnb-typescript',
+    'airbnb/hooks',
+    'prettier'
+  ],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: './tsconfig.json'
+  },
+  rules: {
+    'react/react-in-jsx-scope': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'react/function-component-definition': [
+      'error',
+      {
+        namedComponents: 'arrow-function',
+        unnamedComponents: 'arrow-function'
+      }
+    ],
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/no-unused-vars': 'error'
   }
 }
 ```
 
-#### Pre-commit Hooks (`.husky/pre-commit`)
-```bash
-#!/usr/bin/env sh
-npx lint-staged
-npm run test:unit
+#### Backend (.eslintrc.js)
+```javascript
+module.exports = {
+  extends: [
+    '@typescript-eslint/recommended',
+    'google',
+    'prettier'
+  ],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: './tsconfig.json'
+  },
+  rules: {
+    'require-jsdoc': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'error',
+    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/no-unused-vars': 'error',
+    'max-len': ['error', { code: 100 }]
+  }
+}
 ```
 
-#### Lint-staged Configuration (`package.json`)
+### Pre-commit Hooks Configuration
+
+#### .husky/pre-commit
+```bash
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run lint-staged (handles linting and formatting)
+npx lint-staged
+
+# Run type checking
+pnpm -r type-check
+
+# Run unit tests (fast feedback)
+pnpm --filter api test:unit
+```
+
+#### Individual App Scripts
+
+**apps/web/package.json:**
 ```json
 {
-  "lint-staged": {
-    "apps/web/**/*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "apps/api/**/*.{ts}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "**/*.{json,md}": [
-      "prettier --write"
-    ]
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "format": "prettier --write .",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  }
+}
+```
+
+**apps/api/package.json:**
+```json
+{
+  "scripts": {
+    "dev": "tsx watch src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "lint": "eslint src/ --ext .ts",
+    "lint:fix": "eslint src/ --ext .ts --fix",
+    "format": "prettier --write .",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:unit": "jest --testPathPattern=tests/unit",
+    "test:integration": "jest --testPathPattern=tests/integration",
+    "test:coverage": "jest --coverage"
   }
 }
 ```
@@ -224,43 +358,68 @@ npm run test:unit
 
 Never include claude code, or written by claude code in commit messages
 
+### Database Schema (Prisma Models)
+
+```prisma
+// User authentication and roles
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  role      UserRole @default(PROPERTY_OWNER)
+  kennitala String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relationships
+  managedHAs     HouseAssociation[]
+  memberships    HAMembership[]
+  announcements  Announcement[]
+  messages       Message[]
+}
+
+model HouseAssociation {
+  id               String   @id @default(cuid())
+  name             String
+  address          String
+  registrationNum  String   @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  // Relationships
+  manager          User     @relation(fields: [managerId], references: [id])
+  managerId        String
+  members          HAMembership[]
+  documents        Document[]
+  announcements    Announcement[]
+  meetings         Meeting[]
+}
+
+model HAMembership {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  ha     HouseAssociation @relation(fields: [haId], references: [id])
+  haId   String
+  
+  @@unique([userId, haId])
+}
+
+enum UserRole {
+  HA_MANAGER
+  PROPERTY_OWNER
+}
 ```
-<type>(<scope>): <subject>
 
-<body>
-
-<footer>
-``
-Types: feat, fix, docs, style, refactor, test, chore
-
-Example:
-```
-
-feat(auth): add two-factor authentication
-
-- Implement TOTP generation and validation
-- Add QR code generation for authenticator apps
-- Update user model with 2FA fields
-
-Closes #123
-
-````
-
-## 🗄️ Database Naming Standards
-
-### Entity-Specific Primary Keys
-All database tables use entity-specific primary keys for clarity and consistency:
-
-```sql
--- ✅ STANDARDIZED: Entity-specific primary keys
-sessions.session_id UUID PRIMARY KEY
-leads.lead_id UUID PRIMARY KEY
-messages.message_id UUID PRIMARY KEY
-daily_metrics.daily_metric_id UUID PRIMARY KEY
-agencies.agency_id UUID PRIMARY KEY
-````
 ### Model-Database Alignment
-
+- Use Shadow database for development.
+- Apply the current state from your main dev database
+- Tests the new migration on the shadow database
+- Validates the migration works correctly
+- Apply to main dev database only if successful
+- Deletes the shadow database
 ## 📝 Documentation Standards
 
 ### Code Documentation
@@ -278,21 +437,13 @@ agencies.agency_id UUID PRIMARY KEY
 
 ### Optimization Guidelines
 
-- Profile before optimizing - use `cProfile` or `py-spy`
-- Use `lru_cache` for expensive computations
-- Prefer generators for large datasets
-- Use `asyncio` for I/O-bound operations
-- Consider `multiprocessing` for CPU-bound tasks
-- Cache database queries appropriately
 
 ### Example Optimization
 
 ## 🛡️ Security Best Practices
 
 ### Security Guidelines
-
 - Never commit secrets - use environment variables
-- Validate all user input with Pydantic
 - Use parameterized queries for database operations
 - Implement rate limiting for APIs
 - Use HTTPS for all external communications
@@ -315,11 +466,9 @@ agencies.agency_id UUID PRIMARY KEY
 
 ### Essential Tools
 
-- UV Documentation: https://github.com/astral-sh/uv
-- Ruff: https://github.com/astral-sh/ruff
-- Pytest: https://docs.pytest.org/
-- Pydantic: https://docs.pydantic.dev/
-- FastAPI: https://fastapi.tiangolo.com/
+- NodeJS Latest LTS Release: https://nodejs.org/en/blog/release/v22.18.0
+- PNPM Package Manager: https://pnpm.io/
+- Prisma ORM: https://www.prisma.io/orm
 
 
 ## ⚠️ Important Notes

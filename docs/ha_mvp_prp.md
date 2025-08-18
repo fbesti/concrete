@@ -1,5 +1,5 @@
 # House Association (HA) Management System MVP
-## Project Requirements & Plan (PRP) for Claude Code
+## Project Requirements & Plan (PRP) v3 for Claude Code
 
 ### Project Overview
 Build an MVP for a House Association (Húsfélag) management system that allows managers to register housing associations and property owners to access basic HA information and services.
@@ -7,8 +7,8 @@ Build an MVP for a House Association (Húsfélag) management system that allows 
 ### Technical Architecture
 
 #### Backend Stack
-- **Runtime**: Node.js with TypeScript
-- **Framework**: Express.js
+- **Runtime**: Node.js 22.18.0 LTS
+- **Framework**: Express.js with TypeScript
 - **Database**: PostgreSQL (Azure Database for PostgreSQL)
 - **ORM**: Prisma
 - **Authentication**: JWT-based with email/password
@@ -30,6 +30,8 @@ Build an MVP for a House Association (Húsfélag) management system that allows 
 - **Storage**: Azure Blob Storage
 - **CI/CD**: GitHub Actions
 - **Monitoring**: Azure Application Insights
+- **Package Manager**: pnpm 8.x
+- **Node Version**: 22.18.0 LTS
 
 ### Core MVP Features
 
@@ -60,62 +62,7 @@ Build an MVP for a House Association (Húsfélag) management system that allows 
 - **Meeting Information**: Date, time, agenda items
 - **Meeting History**: View past meetings
 
-### Database Schema (Prisma Models)
-
-```prisma
-// User authentication and roles
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  firstName String
-  lastName  String
-  role      UserRole @default(PROPERTY_OWNER)
-  kennitala String?  @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  // Relationships
-  managedHAs     HouseAssociation[]
-  memberships    HAMembership[]
-  announcements  Announcement[]
-  messages       Message[]
-}
-
-model HouseAssociation {
-  id               String   @id @default(cuid())
-  name             String
-  address          String
-  registrationNum  String   @unique
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  
-  // Relationships
-  manager          User     @relation(fields: [managerId], references: [id])
-  managerId        String
-  members          HAMembership[]
-  documents        Document[]
-  announcements    Announcement[]
-  meetings         Meeting[]
-}
-
-model HAMembership {
-  id     String @id @default(cuid())
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-  ha     HouseAssociation @relation(fields: [haId], references: [id])
-  haId   String
-  
-  @@unique([userId, haId])
-}
-
-enum UserRole {
-  HA_MANAGER
-  PROPERTY_OWNER
-}
-```
-
-### Project Structure
+### Project Structure with Test Integration
 
 ```
 ha-management-mvp/
@@ -126,6 +73,18 @@ ha-management-mvp/
 │   │   │   ├── middleware/
 │   │   │   ├── services/
 │   │   │   └── app.ts
+│   │   ├── tests/                    # API-specific tests
+│   │   │   ├── unit/
+│   │   │   │   ├── services/
+│   │   │   │   └── middleware/
+│   │   │   ├── integration/
+│   │   │   │   ├── routes/
+│   │   │   │   └── auth.test.ts
+│   │   │   ├── fixtures/
+│   │   │   │   └── testData.ts
+│   │   │   └── setup/
+│   │   │       ├── testDb.ts
+│   │   │       └── globalSetup.ts
 │   │   ├── Dockerfile
 │   │   └── package.json
 │   └── web/                          # Next.js Frontend
@@ -134,18 +93,41 @@ ha-management-mvp/
 │       │   ├── components/
 │       │   ├── lib/
 │       │   └── styles/
+│       ├── __tests__/                # Frontend tests
+│       │   ├── components/
+│       │   ├── pages/
+│       │   ├── lib/
+│       │   └── __mocks__/
 │       └── package.json
 ├── packages/
 │   ├── database/                     # Prisma schema and migrations
 │   │   ├── prisma/
+│   │   ├── tests/                    # Database/migration tests
+│   │   │   ├── migrations/
+│   │   │   └── seed.test.ts
 │   │   └── package.json
 │   └── shared/                       # Shared TypeScript types
+│       ├── src/
+│       ├── tests/                    # Shared utility tests
+│       └── package.json
+├── tests/                            # E2E and integration tests
+│   ├── e2e/
+│   │   ├── auth.spec.ts
+│   │   ├── ha-management.spec.ts
+│   │   └── documents.spec.ts
+│   ├── fixtures/
+│   │   ├── users.json
+│   │   └── ha-data.json
+│   └── playwright.config.ts
 ├── infrastructure/
 │   ├── azure/                        # Azure ARM templates or Bicep
 │   └── terraform/                    # Alternative IaC option
 ├── .github/
 │   └── workflows/                    # GitHub Actions
 ├── docker-compose.yml                # Local development
+├── docker-compose.test.yml           # Test environment
+├── .nvmrc                           # Node version
+├── pnpm-workspace.yaml              # pnpm workspace config
 └── README.md
 ```
 
@@ -153,10 +135,11 @@ ha-management-mvp/
 
 #### Phase 1: Foundation Setup
 1. **Project Initialization**
-   - Create monorepo structure
-   - Setup package.json files
-   - Configure TypeScript and ESLint
+   - Create monorepo structure with pnpm workspaces
+   - Setup package.json files with Node.js 22.18.0
+   - Configure TypeScript, ESLint, and Prettier
    - Setup development Docker Compose
+   - Configure Husky and lint-staged
 
 2. **Database Setup**
    - Define Prisma schema
@@ -165,7 +148,7 @@ ha-management-mvp/
    - Seed development data
 
 3. **API Foundation**
-   - Express.js server setup
+   - Express.js server setup with TypeScript
    - Prisma client integration
    - Basic middleware (CORS, logging, error handling)
    - Health check endpoint
@@ -224,6 +207,9 @@ ha-management-mvp/
 
 #### Development Environment Variables
 ```env
+# Node.js version
+NODE_VERSION=22.18.0
+
 # Database
 DATABASE_URL="postgresql://user:pass@localhost:5432/ha_management"
 
@@ -241,18 +227,6 @@ SMTP_PORT=587
 SMTP_USER="your-email@gmail.com"
 SMTP_PASS="your-app-password"
 ```
-
-### Testing Strategy
-
-#### Backend Testing
-- **Unit Tests**: Jest for service layer testing
-- **Integration Tests**: Supertest for API endpoint testing
-- **Database Tests**: In-memory SQLite for fast testing
-
-#### Frontend Testing
-- **Component Tests**: React Testing Library
-- **E2E Tests**: Playwright (optional for MVP)
-
 ### Security Considerations
 
 #### Authentication Security
@@ -267,91 +241,16 @@ SMTP_PASS="your-app-password"
 - CORS configuration
 - SQL injection prevention (Prisma ORM)
 
-### Deployment Strategy
+### Testing Strategy
 
-#### MVP Deployment (Simple)
-- **Frontend**: Azure Static Web Apps
-- **Backend**: Azure Container Instances
-- **Database**: Azure Database for PostgreSQL
+#### Backend Testing
+- **Unit Tests**: Jest for service layer testing
+- **Integration Tests**: Supertest for API endpoint testing
+- **Database Tests**: In-memory SQLite for fast testing
 
-#### Future Scaling Path
-- **Frontend**: CDN integration
-- **Backend**: Azure Kubernetes Service
-- **Database**: Read replicas, connection pooling
-- **Monitoring**: Application Insights, Log Analytics
-
-### Code Style Guidelines
-
-#### Frontend Style Guide (Next.js/React)
-- **Primary**: [Airbnb JavaScript/React Style Guide](https://github.com/airbnb/javascript)
-- **TypeScript**: [Airbnb TypeScript Config](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb-typescript)
-- **Component Naming**: PascalCase for components, camelCase for utilities
-- **File Naming**: kebab-case for pages, PascalCase for components
-- **Import Order**: External libraries → Internal modules → Relative imports
-
-#### Backend Style Guide (Node.js/Express)
-- **Primary**: [Google TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html)
-- **Function Documentation**: TSDoc comments for public APIs
-- **Error Handling**: Explicit error types, no `any` types
-- **File Naming**: kebab-case for all files
-- **Import Order**: Node modules → Local modules → Types
-
-#### Database Style Guide (Prisma)
-- **Model Naming**: PascalCase for models
-- **Field Naming**: camelCase for fields
-- **Enum Naming**: SCREAMING_SNAKE_CASE for enum values
-- **Relation Naming**: Descriptive names (e.g., `authoredPosts`, not `posts`)
-
-#### General TypeScript Rules
-- **Strict Mode**: All TypeScript strict flags enabled
-- **No `any`**: Explicit types required
-- **Return Types**: Required for all public functions
-- **Interface vs Type**: Interfaces for object shapes, types for unions
-
-### Code Quality Tools
-
-#### Linting & Formatting
-```json
-{
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-airbnb-typescript": "^17.1.0",
-    "eslint-config-google": "^0.14.0",
-    "eslint-config-prettier": "^9.0.0",
-    "prettier": "^3.0.0",
-    "husky": "^8.0.3",
-    "lint-staged": "^14.0.1"
-  }
-}
-```
-
-#### Pre-commit Hooks (`.husky/pre-commit`)
-```bash
-#!/usr/bin/env sh
-npx lint-staged
-npm run test:unit
-```
-
-#### Lint-staged Configuration (`package.json`)
-```json
-{
-  "lint-staged": {
-    "apps/web/**/*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "apps/api/**/*.{ts}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "**/*.{json,md}": [
-      "prettier --write"
-    ]
-  }
-}
-```
+#### Frontend Testing
+- **Component Tests**: React Testing Library
+- **E2E Tests**: Playwright for critical user journeys
 
 ### Success Criteria
 
@@ -363,16 +262,18 @@ npm run test:unit
 5. 99% uptime on Azure infrastructure
 
 #### Technical Success Criteria
-1. Automated CI/CD pipeline working
+1. Automated CI/CD pipeline working with pnpm
 2. Database migrations working smoothly
 3. Authentication system secure and functional
 4. File upload/download working reliably
 5. Responsive UI on desktop and mobile
 6. Code quality gates passing (linting, formatting, tests)
+7. Node.js 22.18.0 performance benefits realized
 
 ### Next Steps After MVP
-1. SMS/Email notifications
-2. OAuth integration (Google, Facebook)
+1. SMS/Email notifications integration
+2. OAuth integration (Google, Facebook, IAS)
 3. Advanced meeting management with voting
 4. Financial management features
 5. Service marketplace integration
+6. Performance optimization with Node.js 22 features
