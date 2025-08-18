@@ -5,7 +5,7 @@
 
 #### 1.1 Login Authentication
 The system supports multiple authentication methods:
-- Facebook login
+- Facebook login - [Documentation](https://developers.facebook.com/docs/facebook-login/web/)
 - Google login - [Documentation](https://developers.google.com/identity/gsi/web/guides/overview)
 - IAS (Iceland Authentication Service) - [Documentation](https://docs.devland.is/products/auth)
 

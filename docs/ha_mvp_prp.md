@@ -280,6 +280,79 @@ SMTP_PASS="your-app-password"
 - **Database**: Read replicas, connection pooling
 - **Monitoring**: Application Insights, Log Analytics
 
+### Code Style Guidelines
+
+#### Frontend Style Guide (Next.js/React)
+- **Primary**: [Airbnb JavaScript/React Style Guide](https://github.com/airbnb/javascript)
+- **TypeScript**: [Airbnb TypeScript Config](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb-typescript)
+- **Component Naming**: PascalCase for components, camelCase for utilities
+- **File Naming**: kebab-case for pages, PascalCase for components
+- **Import Order**: External libraries → Internal modules → Relative imports
+
+#### Backend Style Guide (Node.js/Express)
+- **Primary**: [Google TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html)
+- **Function Documentation**: TSDoc comments for public APIs
+- **Error Handling**: Explicit error types, no `any` types
+- **File Naming**: kebab-case for all files
+- **Import Order**: Node modules → Local modules → Types
+
+#### Database Style Guide (Prisma)
+- **Model Naming**: PascalCase for models
+- **Field Naming**: camelCase for fields
+- **Enum Naming**: SCREAMING_SNAKE_CASE for enum values
+- **Relation Naming**: Descriptive names (e.g., `authoredPosts`, not `posts`)
+
+#### General TypeScript Rules
+- **Strict Mode**: All TypeScript strict flags enabled
+- **No `any`**: Explicit types required
+- **Return Types**: Required for all public functions
+- **Interface vs Type**: Interfaces for object shapes, types for unions
+
+### Code Quality Tools
+
+#### Linting & Formatting
+```json
+{
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.0.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^14.0.1"
+  }
+}
+```
+
+#### Pre-commit Hooks (`.husky/pre-commit`)
+```bash
+#!/usr/bin/env sh
+npx lint-staged
+npm run test:unit
+```
+
+#### Lint-staged Configuration (`package.json`)
+```json
+{
+  "lint-staged": {
+    "apps/web/**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "apps/api/**/*.{ts}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{json,md}": [
+      "prettier --write"
+    ]
+  }
+}
+```
+
 ### Success Criteria
 
 #### MVP Success Metrics
@@ -295,6 +368,7 @@ SMTP_PASS="your-app-password"
 3. Authentication system secure and functional
 4. File upload/download working reliably
 5. Responsive UI on desktop and mobile
+6. Code quality gates passing (linting, formatting, tests)
 
 ### Next Steps After MVP
 1. SMS/Email notifications

@@ -44,6 +44,26 @@
         "--rm",
         "hashicorp/terraform-mcp-server"
       ]
+    },
+    "memory-db": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "env": {
+        "MEMORY_FILE_PATH": "/home/freyr/homeprojects/concrete/memory-db.json"
+      }
+    },
+    "memory-app": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "env": {
+        "MEMORY_FILE_PATH": "/home/freyr/homeprojects/concrete/memory-app.json"
+      }
     }
   }
 }
