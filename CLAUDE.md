@@ -174,7 +174,7 @@ packages:
 - **Primary**: [Airbnb JavaScript/React Style Guide](https://github.com/airbnb/javascript)
 - **TypeScript**: [Airbnb TypeScript Config](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb-typescript)
 - **Component Naming**: PascalCase for components, camelCase for utilities
-- **File Naming**: kebab-case for pages, PascalCase for components
+- **File Naming**: kebab-case for pages, PascalCase for components, kebab-case for API routes, PascalCase for models, PascalCase for services, PascalCase for controllers, kebab-case for middleware, kebab-case for utilities, kebab-case for type files, kebab-case for config, SCREAMING_SNAKE_CASE for constant files, kebab-case for migrations, match source file for tests, camelCase for hooks, kebab-case for stores
 - **Import Order**: External libraries → Internal modules → Relative imports
 
 #### Backend Style Guide (Node.js/Express)

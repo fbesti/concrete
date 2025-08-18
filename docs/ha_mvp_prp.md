@@ -136,6 +136,7 @@ ha-management-mvp/
 #### Phase 1: Foundation Setup
 1. **Project Initialization**
    - Create monorepo structure with pnpm workspaces
+   - Setup hooks
    - Setup package.json files with Node.js 22.18.0
    - Configure TypeScript, ESLint, and Prettier
    - Setup development Docker Compose
