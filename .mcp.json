@@ -21,13 +21,6 @@
         "https://gitmcp.io/microsoft/dotnet/"
       ]
     },
-    "prisma-mcp": {
-      "command": "npx",
-      "args": [
-        "mcp-remote",
-        "https://github.com/prisma/prisma/"
-      ]
-    },
     "pnpm-mcp": {
       "command": "npx",
       "args": [
