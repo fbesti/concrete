@@ -1,0 +1,1 @@
+export type { User, HouseAssociation, HAMembership, UserRole } from '@prisma/client';
