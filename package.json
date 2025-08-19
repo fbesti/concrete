@@ -12,7 +12,7 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "test:unit": "pnpm --filter api test:unit",
-    "test:integration": "pnpm --filter api test:integration", 
+    "test:integration": "pnpm --filter api test:integration",
     "test:e2e": "playwright test",
     "test:all": "pnpm run test && pnpm run test:e2e",
     "lint": "pnpm -r lint",
@@ -30,7 +30,7 @@
       "pnpm --filter web format"
     ],
     "apps/api/**/*.{ts}": [
-      "pnpm --filter api lint:fix", 
+      "pnpm --filter api lint:fix",
       "pnpm --filter api format"
     ],
     "**/*.{json,md}": [
@@ -40,6 +40,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.47.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.1.0",
     "eslint-config-google": "^0.14.0",
