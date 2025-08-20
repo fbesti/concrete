@@ -1,9 +1,7 @@
 module.exports = {
-  extends: [
-    '../../.eslintrc.js'
-  ],
+  extends: ['../../.eslintrc.js'],
   rules: {
     'require-jsdoc': 'off',
-    'max-len': ['error', { code: 100 }]
-  }
+    'max-len': ['error', { code: 100 }],
+  },
 };
