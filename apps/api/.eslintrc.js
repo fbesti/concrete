@@ -1,9 +1,16 @@
 module.exports = {
-  extends: [
-    '../../.eslintrc.js'
-  ],
+  extends: ['../../.eslintrc.js'],
   rules: {
     'require-jsdoc': 'off',
-    'max-len': ['error', { code: 100 }]
-  }
+    'valid-jsdoc': 'off',
+    'max-len': ['error', { code: 100 }],
+    'no-unused-vars': ['error', { 
+      argsIgnorePattern: '^_',
+      varsIgnorePattern: '^_',
+      destructuredArrayIgnorePattern: '^_'
+    }],
+    'new-cap': ['error', { 
+      capIsNewExceptions: ['Router'] 
+    }],
+  },
 };

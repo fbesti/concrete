@@ -1,6 +1,23 @@
 # HA Management MVP
 
-House Association Management system built with Next.js, Node.js, and PostgreSQL.
+House Association (Húsfélag) Management system built with Next.js, Node.js, and PostgreSQL.
+
+## 🎯 **Project Status**
+
+✅ **Phase 1: Foundation Setup** - Complete  
+✅ **Phase 2: Authentication System** - Complete  
+🔄 **Phase 3: Core HA Features** - Next  
+⏳ **Phase 4: Frontend Application** - Planned  
+⏳ **Phase 5: Deployment & CI/CD** - Planned
+
+### Current Features (Phase 2 Complete)
+
+- ✅ Complete JWT-based authentication system
+- ✅ User registration and login with secure password hashing
+- ✅ Role-based access control (HA Manager, Property Owner)
+- ✅ User profile management and password changes
+- ✅ Comprehensive input validation and security measures
+- ✅ Full test coverage with unit and integration tests
 
 ## 🏗️ Project Structure
 
@@ -40,13 +57,27 @@ pnpm test                   # All package tests
 pnpm test:all              # All tests + E2E
 
 # Specific test types
-pnpm test:unit             # API unit tests only
-pnpm test:integration      # API integration tests only
-pnpm test:e2e              # End-to-end tests (Playwright)
+pnpm --filter api test:unit        # API unit tests (39 tests)
+pnpm --filter api test:integration # API integration tests
+pnpm test:e2e                      # End-to-end tests (Playwright)
+pnpm --filter api test:coverage    # Test coverage report
 
 # Watch mode
 pnpm --filter api test:watch
 ```
+
+## 🔒 **Security Features**
+
+The authentication system includes comprehensive security measures:
+
+- **Password Security**: bcrypt hashing with 12 salt rounds
+- **JWT Tokens**: Access tokens (15min) + refresh tokens (7d)
+- **Input Validation**: Zod schemas with XSS protection
+- **Rate Limiting**: Multiple tiers (general, auth, account creation)
+- **CORS Configuration**: Proper origins and headers
+- **Security Headers**: Helmet with CSP configuration
+- **Password Requirements**: 8+ chars, uppercase, lowercase, number, special char
+- **Kennitala Validation**: Format validation for Icelandic ID numbers
 
 ## 🔍 **Code Quality Commands**
 
@@ -104,17 +135,18 @@ pnpm --filter api remove express
 
 ```bash
 # First time setup
-cp .env.example .env       # Copy environment file
-pnpm install              # Install dependencies
-docker-compose up postgres # Start database
-pnpm --filter database db:migrate # Setup database
+cp apps/api/.env.example apps/api/.env  # Copy API environment file
+pnpm install                           # Install dependencies
+docker-compose up postgres -d          # Start database
+pnpm --filter database db:migrate      # Setup database
+pnpm --filter database db:seed         # Seed with test data
 ```
 
 ## 📋 **Quick Start Sequence**
 
 ```bash
 # 1. Environment setup
-cp .env.example .env
+cp apps/api/.env.example apps/api/.env
 
 # 2. Install dependencies
 pnpm install
@@ -124,35 +156,114 @@ docker-compose up postgres -d
 
 # 4. Setup database
 pnpm --filter database db:migrate
+pnpm --filter database db:seed
 
 # 5. Start development
-pnpm dev
+pnpm --filter api dev    # Start API server
+# In another terminal:
+pnpm --filter web dev    # Start web app (when ready)
+
+# 6. Test the API
+curl http://localhost:3001/health
 ```
 
 ## 🌐 **Access URLs**
 
 - **API**: http://localhost:3001
 - **Web App**: http://localhost:3000
+- **API Health Check**: http://localhost:3001/health
 - **Prisma Studio**: http://localhost:5555 (after running `db:studio`)
+
+## 🔐 **Authentication Endpoints**
+
+The API now includes a complete authentication system:
+
+```bash
+# User Registration
+POST /api/v1/auth/register
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!",
+  "confirmPassword": "SecurePass123!",
+  "firstName": "John",
+  "lastName": "Doe",
+  "role": "PROPERTY_OWNER",
+  "kennitala": "010170-1234" // Optional Icelandic ID
+}
+
+# User Login
+POST /api/v1/auth/login
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!"
+}
+
+# Get Current User
+GET /api/v1/auth/me
+Authorization: Bearer <access-token>
+
+# Refresh Token
+POST /api/v1/auth/refresh
+{
+  "refreshToken": "<refresh-token>"
+}
+
+# Update Profile
+PUT /api/v1/users/profile
+Authorization: Bearer <access-token>
+{
+  "firstName": "Jane",
+  "lastName": "Smith"
+}
+
+# Change Password
+PUT /api/v1/users/password
+Authorization: Bearer <access-token>
+{
+  "currentPassword": "OldPass123!",
+  "newPassword": "NewPass123!",
+  "confirmNewPassword": "NewPass123!"
+}
+```
+
+## 👥 **Test Users**
+
+For development and testing, the database is seeded with test users:
+
+```bash
+# HA Managers
+Email: manager1@ha.is | Password: password123
+Email: manager2@ha.is | Password: password123
+
+# Property Owners
+Email: owner1@example.is | Password: password123
+Email: owner2@example.is | Password: password123
+Email: owner3@example.is | Password: password123
+```
 
 ## 🛠️ **Tech Stack**
 
-- **Frontend**: Next.js 13, React 18, TypeScript
-- **Backend**: Node.js, Express, TypeScript
+- **Frontend**: Next.js 14, React 18, TypeScript
+- **Backend**: Node.js 22.18.0, Express, TypeScript
 - **Database**: PostgreSQL, Prisma ORM
-- **Testing**: Jest, Playwright
+- **Authentication**: JWT tokens, bcrypt password hashing
+- **Validation**: Zod schemas with comprehensive input validation
+- **Testing**: Jest (unit/integration), Playwright (E2E), Supertest
 - **Code Quality**: ESLint, Prettier, Husky
-- **Package Manager**: pnpm
+- **Package Manager**: pnpm 10.15.0
 - **Containerization**: Docker, Docker Compose
 
 ## 📚 **Development Guidelines**
 
 - Follow the patterns defined in `CLAUDE.md`
 - Use strict TypeScript configuration
-- Write tests for all new features
+- Write tests for all new features (aim for 80%+ coverage)
 - Run linting and type checking before commits
-- Keep functions under 50 lines
-- Follow the established file naming conventions
+- Keep functions under 50 lines, files under 500 lines
+- Follow established naming conventions (kebab-case files, PascalCase components)
+- Use Zod schemas for all API validation
+- Implement proper error handling with structured responses
+- Add authentication middleware to protected routes
 
 ## 🤝 **Contributing**
 
