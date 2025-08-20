@@ -35,7 +35,7 @@ Build an MVP for a House Association (Húsfélag) management system that allows 
 - **Storage**: Azure Blob Storage
 - **CI/CD**: GitHub Actions
 - **Monitoring**: Azure Application Insights
-- **Package Manager**: pnpm 8.x
+- **Package Manager**: pnpm 10.15.0
 - **Node Version**: 22.18.0 LTS
 
 ### Core MVP Features
