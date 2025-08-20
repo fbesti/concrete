@@ -100,58 +100,6 @@ src/
 
 ### Package Manager & Node.js Configuration
 
-#### Root package.json
-
-```json
-{
-  "name": "ha-management-mvp",
-  "private": true,
-  "engines": {
-    "node": ">=22.18.0 <23.0.0",
-    "pnpm": ">=10.15.0"
-  },
-  "packageManager": "pnpm@10.15.0",
-  "scripts": {
-    "prepare": "husky install",
-    "dev": "pnpm --filter web dev",
-    "build": "pnpm -r build",
-    "test": "pnpm -r test",
-    "test:unit": "pnpm --filter api test:unit",
-    "test:integration": "pnpm --filter api test:integration",
-    "test:e2e": "playwright test",
-    "test:all": "pnpm run test && pnpm run test:e2e",
-    "lint": "pnpm -r lint",
-    "lint:fix": "pnpm -r lint:fix",
-    "format": "pnpm -r format",
-    "type-check": "pnpm -r type-check"
-  },
-  "workspaces": ["apps/*", "packages/*"],
-  "lint-staged": {
-    "apps/web/**/*.{ts,tsx}": [
-      "pnpm --filter web lint:fix",
-      "pnpm --filter web format"
-    ],
-    "apps/api/**/*.{ts}": [
-      "pnpm --filter api lint:fix",
-      "pnpm --filter api format"
-    ],
-    "**/*.{json,md}": ["prettier --write"]
-  },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-airbnb-typescript": "^17.1.0",
-    "eslint-config-google": "^0.14.0",
-    "eslint-config-prettier": "^9.0.0",
-    "prettier": "^3.0.0",
-    "husky": "^8.0.3",
-    "lint-staged": "^14.0.1",
-    "@playwright/test": "^1.40.0"
-  }
-}
-```
-
 #### pnpm-workspace.yaml
 
 ```yaml
@@ -372,10 +320,6 @@ pnpm --filter api test:unit
 - `refactor/*` - Code refactoring
 - `test/*` - Test additions or fixes
 
-### Commit Message Format
-
-Never include claude code, or written by claude code in commit messages
-
 ### Database Schema (Prisma Models)
 
 ```prisma
@@ -562,14 +506,6 @@ rg --files -g "*.py"
 main (protected) ←── PR ←── feature/your-feature
 ↓ ↑
 deploy development
-
-### Daily Workflow:
-
-1. git checkout main && git pull origin main
-2. git checkout -b feature/new-feature
-3. Make changes + tests
-4. git push origin feature/new-feature
-5. Create PR → Review → Merge to main
 
 ---
 
