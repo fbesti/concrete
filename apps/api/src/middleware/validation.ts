@@ -62,6 +62,9 @@ export const validateParams = (schema: ZodSchema) => {
   return validate({ params: schema });
 };
 
+// Alias for common usage pattern
+export const validateRequest = validate;
+
 // Sanitization middleware
 export const sanitizeInput = (
   req: Request,

@@ -154,3 +154,32 @@ export const createPaginationInfo = (
     hasPrev: page > 1,
   };
 };
+
+// Response helpers that don't require Express Response object
+export const createSuccessResponse = <T>(
+  message: string,
+  data: T
+): ApiResponse<T> => {
+  return {
+    success: true,
+    message,
+    data,
+    metadata: {
+      timestamp: new Date().toISOString(),
+    },
+  };
+};
+
+export const createErrorResponse = (
+  error: string,
+  details?: any
+): ApiResponse => {
+  return {
+    success: false,
+    error,
+    metadata: {
+      timestamp: new Date().toISOString(),
+    },
+    ...(details && { details }),
+  };
+};

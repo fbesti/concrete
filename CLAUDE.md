@@ -101,22 +101,23 @@ src/
 ### Package Manager & Node.js Configuration
 
 #### Root package.json
+
 ```json
 {
   "name": "ha-management-mvp",
   "private": true,
   "engines": {
     "node": ">=22.18.0 <23.0.0",
-    "pnpm": ">=8.0.0"
+    "pnpm": ">=10.15.0"
   },
-  "packageManager": "pnpm@8.15.1",
+  "packageManager": "pnpm@10.15.0",
   "scripts": {
     "prepare": "husky install",
     "dev": "pnpm --filter web dev",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "test:unit": "pnpm --filter api test:unit",
-    "test:integration": "pnpm --filter api test:integration", 
+    "test:integration": "pnpm --filter api test:integration",
     "test:e2e": "playwright test",
     "test:all": "pnpm run test && pnpm run test:e2e",
     "lint": "pnpm -r lint",
@@ -124,22 +125,17 @@ src/
     "format": "pnpm -r format",
     "type-check": "pnpm -r type-check"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "workspaces": ["apps/*", "packages/*"],
   "lint-staged": {
     "apps/web/**/*.{ts,tsx}": [
       "pnpm --filter web lint:fix",
       "pnpm --filter web format"
     ],
     "apps/api/**/*.{ts}": [
-      "pnpm --filter api lint:fix", 
+      "pnpm --filter api lint:fix",
       "pnpm --filter api format"
     ],
-    "**/*.{json,md}": [
-      "prettier --write"
-    ]
+    "**/*.{json,md}": ["prettier --write"]
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",
@@ -157,6 +153,7 @@ src/
 ```
 
 #### pnpm-workspace.yaml
+
 ```yaml
 packages:
   - 'apps/*'
@@ -164,6 +161,7 @@ packages:
 ```
 
 #### .nvmrc
+
 ```
 22.18.0
 ```
@@ -171,6 +169,7 @@ packages:
 ### Code Style Guidelines
 
 #### Frontend Style Guide (Next.js/React)
+
 - **Primary**: [Airbnb JavaScript/React Style Guide](https://github.com/airbnb/javascript)
 - **TypeScript**: [Airbnb TypeScript Config](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb-typescript)
 - **Component Naming**: PascalCase for components, camelCase for utilities
@@ -178,19 +177,24 @@ packages:
 - **Import Order**: External libraries → Internal modules → Relative imports
 
 #### Backend Style Guide (Node.js/Express)
+
 - **Primary**: [Google TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html)
-- **Function Documentation**: TSDoc comments for public APIs
+- **Function Documentation**: TSDoc comments for public APIs (JSDoc not required for internal functions)
 - **Error Handling**: Explicit error types, no `any` types
+- **Unused Variables**: Prefix with `_` (underscore) to indicate intentionally unused
 - **File Naming**: kebab-case for all files
 - **Import Order**: Node modules → Local modules → Types
+- **Variable Destructuring**: Use `_` prefix for destructured variables that won't be used
 
 #### Database Style Guide (Prisma)
+
 - **Model Naming**: PascalCase for models
 - **Field Naming**: camelCase for fields
 - **Enum Naming**: SCREAMING_SNAKE_CASE for enum values
 - **Relation Naming**: Descriptive names (e.g., `authoredPosts`, not `posts`)
 
 #### General TypeScript Rules
+
 - **Strict Mode**: All TypeScript strict flags enabled
 - **No `any`**: Explicit types required
 - **Return Types**: Required for all public functions
@@ -201,6 +205,7 @@ packages:
 ### ESLint Configuration
 
 #### Frontend (.eslintrc.js)
+
 ```javascript
 module.exports = {
   extends: [
@@ -209,11 +214,11 @@ module.exports = {
     'airbnb',
     'airbnb-typescript',
     'airbnb/hooks',
-    'prettier'
+    'prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: './tsconfig.json'
+    project: './tsconfig.json',
   },
   rules: {
     'react/react-in-jsx-scope': 'off',
@@ -222,40 +227,52 @@ module.exports = {
       'error',
       {
         namedComponents: 'arrow-function',
-        unnamedComponents: 'arrow-function'
-      }
+        unnamedComponents: 'arrow-function',
+      },
     ],
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/no-unused-vars': 'error'
-  }
-}
+    '@typescript-eslint/no-unused-vars': 'error',
+  },
+};
 ```
 
 #### Backend (.eslintrc.js)
+
 ```javascript
 module.exports = {
-  extends: [
-    '@typescript-eslint/recommended',
-    'google',
-    'prettier'
-  ],
+  extends: ['@typescript-eslint/recommended', 'google', 'prettier'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: './tsconfig.json'
+    project: './tsconfig.json',
   },
   rules: {
     'require-jsdoc': 'off',
+    'valid-jsdoc': 'off',
     '@typescript-eslint/explicit-function-return-type': 'error',
     '@typescript-eslint/no-explicit-any': 'error',
-    '@typescript-eslint/no-unused-vars': 'error',
-    'max-len': ['error', { code: 100 }]
-  }
-}
+    'max-len': ['error', { code: 100 }],
+    'no-unused-vars': [
+      'error',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+      },
+    ],
+    'new-cap': [
+      'error',
+      {
+        capIsNewExceptions: ['Router'],
+      },
+    ],
+  },
+};
 ```
 
 ### Pre-commit Hooks Configuration
 
 #### .husky/pre-commit
+
 ```bash
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
@@ -273,6 +290,7 @@ pnpm --filter api test:unit
 #### Individual App Scripts
 
 **apps/web/package.json:**
+
 ```json
 {
   "scripts": {
@@ -290,6 +308,7 @@ pnpm --filter api test:unit
 ```
 
 **apps/api/package.json:**
+
 ```json
 {
   "scripts": {
@@ -341,7 +360,6 @@ pnpm --filter api test:unit
 
 ## 🏗️ Data Models and Validation
 
-
 ## 🔄 Git Workflow
 
 ### Branch Strategy
@@ -372,7 +390,7 @@ model User {
   kennitala String?  @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   // Relationships
   managedHAs     HouseAssociation[]
   memberships    HAMembership[]
@@ -387,7 +405,7 @@ model HouseAssociation {
   registrationNum  String   @unique
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  
+
   // Relationships
   manager          User     @relation(fields: [managerId], references: [id])
   managerId        String
@@ -403,7 +421,7 @@ model HAMembership {
   userId String
   ha     HouseAssociation @relation(fields: [haId], references: [id])
   haId   String
-  
+
   @@unique([userId, haId])
 }
 
@@ -414,40 +432,71 @@ enum UserRole {
 ```
 
 ### Model-Database Alignment
+
 - Use Shadow database for development.
 - Apply the current state from your main dev database
 - Tests the new migration on the shadow database
 - Validates the migration works correctly
 - Apply to main dev database only if successful
 - Deletes the shadow database
+
 ## 📝 Documentation Standards
 
 ### Code Documentation
 
-- Every module should have a docstring explaining its purpose
-- Public functions must have complete docstrings
-- Complex logic should have inline comments with `# Reason:` prefix
+- Every module should have a brief comment explaining its purpose
+- Public APIs should have TSDoc comments when appropriate
+- Complex logic should have inline comments explaining the reasoning
+- JSDoc is not required for internal functions (ESLint rule disabled)
 - Keep README.md updated with setup instructions and examples
 - Maintain CHANGELOG.md for version history
 
-### API Documentation
+### Unused Variables and Parameters
 
+Follow ESLint conventions for unused variables:
+
+```typescript
+// ✅ Correct: Prefix unused variables with underscore
+const { password: _password, ...userWithoutPassword } = user;
+const { confirmPassword: _, ...userData } = registrationData;
+
+// ✅ Correct: Unused function parameters
+export const errorHandler = (
+  error: ApiError,
+  req: Request,
+  res: Response,
+  _next: NextFunction // Prefixed because Express requires 4 params
+): void => {
+  // Implementation
+};
+
+// ✅ Correct: Destructuring with unused values
+const [first, , third] = array; // Middle element intentionally skipped
+
+// ❌ Incorrect: Unused variables without underscore prefix
+const { password, ...userWithoutPassword } = user; // ESLint error
+```
+
+### API Documentation
 
 ## 🚀 Performance Considerations
 
 ### Optimization Guidelines
-
 
 ### Example Optimization
 
 ## 🛡️ Security Best Practices
 
 ### Security Guidelines
+
 - Never commit secrets - use environment variables
-- Use parameterized queries for database operations
-- Implement rate limiting for APIs
+- Use parameterized queries for database operations (Prisma ORM provides this)
+- Implement rate limiting for APIs (configured in middleware)
 - Use HTTPS for all external communications
-- Implement proper authentication and authorization
+- Implement proper authentication and authorization (JWT-based system implemented)
+- Password hashing with bcrypt (12 salt rounds minimum)
+- Input validation with Zod schemas and XSS protection
+- Structured error responses without sensitive information leakage
 
 ### Example Security Implementation
 
@@ -455,12 +504,9 @@ enum UserRole {
 
 ### Debugging Commands
 
-
 ## 📊 Monitoring and Observability
 
 ### Structured Logging
-
-
 
 ## 📚 Useful Resources
 
@@ -469,7 +515,6 @@ enum UserRole {
 - NodeJS Latest LTS Release: https://nodejs.org/en/blog/release/v22.18.0
 - PNPM Package Manager: https://pnpm.io/
 - Prisma ORM: https://www.prisma.io/orm
-
 
 ## ⚠️ Important Notes
 

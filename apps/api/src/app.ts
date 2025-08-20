@@ -90,8 +90,13 @@ app.get('/health', async (req: Request, res: Response): Promise<void> => {
 // Make Prisma client available to routes
 app.locals.prisma = prisma;
 
-// Route handlers will be added here
-// app.use('/api/v1', routes);
+// Import routes
+import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
+
+// API routes
+app.use(`${env.API_PREFIX}/auth`, authRoutes);
+app.use(`${env.API_PREFIX}/users`, userRoutes);
 
 // 404 handler for undefined routes
 app.use('*', notFoundHandler);
