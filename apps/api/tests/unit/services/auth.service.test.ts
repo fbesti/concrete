@@ -127,11 +127,15 @@ describe('AuthService', () => {
 
       const result = AuthService.generateRefreshToken(payload);
 
-      expect(jwt.sign).toHaveBeenCalledWith(payload, process.env.JWT_SECRET, {
-        expiresIn: '7d',
-        issuer: 'ha-management-api',
-        audience: 'ha-management-client',
-      });
+      expect(jwt.sign).toHaveBeenCalledWith(
+        payload,
+        process.env.JWT_REFRESH_SECRET,
+        {
+          expiresIn: '7d',
+          issuer: 'ha-management-api',
+          audience: 'ha-management-client',
+        }
+      );
       expect(result).toBe(token);
     });
   });
