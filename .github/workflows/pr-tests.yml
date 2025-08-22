@@ -42,6 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     needs: [code-quality, api-tests, web-tests, database-tests, shared-tests, security-audit, build-verification]
+    #needs: [code-quality, api-tests, web-tests, database-tests, shared-tests, security-audit, build-verification]
     
     steps:
       - name: Create PR Summary Comment
