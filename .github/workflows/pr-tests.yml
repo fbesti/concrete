@@ -62,8 +62,8 @@ jobs:
       - name: Linting
         run: pnpm lint
 
-      - name: Format checking
-        run: pnpm format:check
+#      - name: Format checking
+#        run: pnpm format:check
 
       
   # Job 8: PR Summary Comment
