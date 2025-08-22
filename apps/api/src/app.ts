@@ -93,10 +93,12 @@ app.locals.prisma = prisma;
 // Import routes
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
+import haRoutes from './routes/ha.routes';
 
 // API routes
 app.use(`${env.API_PREFIX}/auth`, authRoutes);
 app.use(`${env.API_PREFIX}/users`, userRoutes);
+app.use(`${env.API_PREFIX}/ha`, haRoutes);
 
 // 404 handler for undefined routes
 app.use('*', notFoundHandler);

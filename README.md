@@ -64,6 +64,11 @@ pnpm --filter api test:coverage    # Test coverage report
 
 # Watch mode
 pnpm --filter api test:watch
+
+# Extensive Tests and lint
+pnpm type-check
+pnpm lint
+pnpm format:check
 ```
 
 ## 🔒 **Security Features**
