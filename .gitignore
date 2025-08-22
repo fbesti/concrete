@@ -5,4 +5,4 @@ node_modules
 apps/api/dist/
 apps/web/.next/
 packages/
-next-env.d.ts
+*next-env.d.ts
