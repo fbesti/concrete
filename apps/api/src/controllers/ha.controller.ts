@@ -65,13 +65,11 @@ export const createHA = async (
 
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
-    res
-      .status(500)
-      .json(
-        createErrorResponse('Failed to create house association', {
-          details: errorMessage,
-        })
-      );
+    res.status(500).json(
+      createErrorResponse('Failed to create house association', {
+        details: errorMessage,
+      })
+    );
   }
 };
 
@@ -105,13 +103,11 @@ export const getHA = async (
 
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
-    res
-      .status(500)
-      .json(
-        createErrorResponse('Failed to get house association', {
-          details: errorMessage,
-        })
-      );
+    res.status(500).json(
+      createErrorResponse('Failed to get house association', {
+        details: errorMessage,
+      })
+    );
   }
 };
 
@@ -154,13 +150,11 @@ export const listHAs = async (
 
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
-    res
-      .status(500)
-      .json(
-        createErrorResponse('Failed to list house associations', {
-          details: errorMessage,
-        })
-      );
+    res.status(500).json(
+      createErrorResponse('Failed to list house associations', {
+        details: errorMessage,
+      })
+    );
   }
 };
 
@@ -194,13 +188,11 @@ export const updateHA = async (
 
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
-    res
-      .status(500)
-      .json(
-        createErrorResponse('Failed to update house association', {
-          details: errorMessage,
-        })
-      );
+    res.status(500).json(
+      createErrorResponse('Failed to update house association', {
+        details: errorMessage,
+      })
+    );
   }
 };
 
@@ -233,13 +225,11 @@ export const deleteHA = async (
 
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
-    res
-      .status(500)
-      .json(
-        createErrorResponse('Failed to delete house association', {
-          details: errorMessage,
-        })
-      );
+    res.status(500).json(
+      createErrorResponse('Failed to delete house association', {
+        details: errorMessage,
+      })
+    );
   }
 };
 
@@ -273,13 +263,11 @@ export const addMember = async (
 
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
-    res
-      .status(500)
-      .json(
-        createErrorResponse('Failed to add member to house association', {
-          details: errorMessage,
-        })
-      );
+    res.status(500).json(
+      createErrorResponse('Failed to add member to house association', {
+        details: errorMessage,
+      })
+    );
   }
 };
 
@@ -310,13 +298,11 @@ export const removeMember = async (
 
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
-    res
-      .status(500)
-      .json(
-        createErrorResponse('Failed to remove member from house association', {
-          details: errorMessage,
-        })
-      );
+    res.status(500).json(
+      createErrorResponse('Failed to remove member from house association', {
+        details: errorMessage,
+      })
+    );
   }
 };
 
@@ -357,13 +343,11 @@ export const listMembers = async (
 
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
-    res
-      .status(500)
-      .json(
-        createErrorResponse('Failed to list house association members', {
-          details: errorMessage,
-        })
-      );
+    res.status(500).json(
+      createErrorResponse('Failed to list house association members', {
+        details: errorMessage,
+      })
+    );
   }
 };
 
