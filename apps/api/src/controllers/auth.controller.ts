@@ -94,7 +94,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const { password: _userPassword, ...userWithoutPassword } = user;
 
     // Log successful login
-    console.log(`User ${user.email} logged in successfully`, {
+    console.log(`User ID ${user.id} logged in successfully`, {
       userId: user.id,
       role: user.role,
       rememberMe,
@@ -161,7 +161,7 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
     // by removing the tokens from storage. However, we can log the logout event.
 
     if (req.user) {
-      console.log(`User ${req.user.email} logged out`, {
+      console.log(`User ID ${req.user.id} logged out`, {
         userId: req.user.id,
         timestamp: new Date().toISOString(),
       });
@@ -197,7 +197,24 @@ export const forgotPassword = async (
 
     // TODO: Implement password reset token generation and email sending
     // For MVP, we'll just log the request and return success
-    console.log(`Password reset requested for email: ${email}`);
+
+    // Look up user to get ID for secure logging (don't expose if user exists)
+    try {
+      const user = await AuthService.getUserByEmail(email);
+      if (user) {
+        console.log(`Password reset requested for user ID: ${user.id}`, {
+          timestamp: new Date().toISOString(),
+        });
+      } else {
+        console.log(`Password reset requested for unknown email`, {
+          timestamp: new Date().toISOString(),
+        });
+      }
+    } catch (error) {
+      console.log(`Password reset requested - lookup failed`, {
+        timestamp: new Date().toISOString(),
+      });
+    }
 
     // Always return success to prevent email enumeration attacks
     res.status(200).json(
