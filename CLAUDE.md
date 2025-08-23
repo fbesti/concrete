@@ -33,26 +33,28 @@ Avoid building functionality on speculation. Implement features only when they a
 Follow strict vertical slice architecture with tests living next to the code they test:
 
 ```
-src/
+Concrete House Association Management/
 ├── apps/
 │   ├── api/                          # Node.js API
 │   │   ├── src/
 │   │   │   ├── routes/
 │   │   │   ├── middleware/
 │   │   │   ├── services/
+│   │   │   ├── controllers/
+│   │   │   ├── schemas/
+│   │   │   ├── config/
+│   │   │   ├── utils/
 │   │   │   └── app.ts
 │   │   ├── tests/                    # API-specific tests
 │   │   │   ├── unit/
 │   │   │   │   ├── services/
 │   │   │   │   └── middleware/
 │   │   │   ├── integration/
-│   │   │   │   ├── routes/
-│   │   │   │   └── auth.test.ts
+│   │   │   │   └── {routes}/
 │   │   │   ├── fixtures/
-│   │   │   │   └── testData.ts
+│   │   │   │   └── ha-test-data.ts
 │   │   │   └── setup/
-│   │   │       ├── testDb.ts
-│   │   │       └── globalSetup.ts
+│   │   │       └── test-env.ts
 │   │   ├── Dockerfile
 │   │   └── package.json
 │   └── web/                          # Next.js Frontend
@@ -70,31 +72,43 @@ src/
 ├── packages/
 │   ├── database/                     # Prisma schema and migrations
 │   │   ├── prisma/
-│   │   ├── tests/                    # Database/migration tests
 │   │   │   ├── migrations/
-│   │   │   └── seed.test.ts
+│   │   │   ├── schema.prisma
+│   │   │   └── seed.ts
+│   │   ├── src/
+│   │   │   ├── client.ts
+│   │   │   ├── index.ts
+│   │   │   └── types.ts
+│   │   ├── tests/                    # Database/migration tests
+│   │   │   ├── client.test.ts
+│   │   │   └── {migrations}/
 │   │   └── package.json
 │   └── shared/                       # Shared TypeScript types
 │       ├── src/
+│       │   ├── index.ts
+│       │   ├── types/
+│       │   │   ├── user.ts
+│       │   │   └── house-association.ts
+│       │   └── schemas/
+│       │       └── validation.ts
 │       ├── tests/                    # Shared utility tests
+│       │   └── types.test.ts
 │       └── package.json
 ├── tests/                            # E2E and integration tests
 │   ├── e2e/
-│   │   ├── auth.spec.ts
-│   │   ├── ha-management.spec.ts
-│   │   └── documents.spec.ts
-│   ├── fixtures/
-│   │   ├── users.json
-│   │   └── ha-data.json
-│   └── playwright.config.ts
+│   └── fixtures/
 ├── infrastructure/
-├── .github/
+├── docs/
+├── .github/                          # GitHub Actions workflows
 │   └── workflows/
-│       ├── test.yml                  # Test workflow
-│       ├── build.yml
-│       └── deploy.yml
+│       ├── pr-tests.yml              # PR test workflow
+│       └── way_to_much/
+│           └── extensive.yml
+├── .husky/                           # Git hooks configuration
+│   └── pre-commit                    # Pre-commit hook script
 ├── docker-compose.yml
-├── docker-compose.test.yml           # Test environment
+├── pnpm-workspace.yaml
+├── .nvmrc
 └── README.md
 ```
 
@@ -104,8 +118,16 @@ src/
 
 ```yaml
 packages:
-  - 'apps/*'
-  - 'packages/*'
+  - apps/*
+  - packages/*
+
+ignoredBuiltDependencies:
+  - '@prisma/client'
+  - '@prisma/engines'
+  - bcrypt
+  - esbuild
+  - prisma
+  - unrs-resolver
 ```
 
 #### .nvmrc
@@ -121,7 +143,7 @@ packages:
 - **Primary**: [Airbnb JavaScript/React Style Guide](https://github.com/airbnb/javascript)
 - **TypeScript**: [Airbnb TypeScript Config](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb-typescript)
 - **Component Naming**: PascalCase for components, camelCase for utilities
-- **File Naming**: kebab-case for pages, PascalCase for components, kebab-case for API routes, PascalCase for models, PascalCase for services, PascalCase for controllers, kebab-case for middleware, kebab-case for utilities, kebab-case for type files, kebab-case for config, SCREAMING_SNAKE_CASE for constant files, kebab-case for migrations, match source file for tests, camelCase for hooks, kebab-case for stores
+- **File Naming**: kebab-case for pages, PascalCase for components, kebab-case for API routes, PascalCase for models, PascalCase for services (e.g., `auth.service.ts`), PascalCase for controllers (e.g., `auth.controller.ts`), kebab-case for middleware, kebab-case for utilities, kebab-case for type files, kebab-case for config, SCREAMING_SNAKE_CASE for constant files, kebab-case for migrations, match source file for tests, camelCase for hooks, kebab-case for stores
 - **Import Order**: External libraries → Internal modules → Relative imports
 
 #### Backend Style Guide (Node.js/Express)
@@ -130,7 +152,7 @@ packages:
 - **Function Documentation**: TSDoc comments for public APIs (JSDoc not required for internal functions)
 - **Error Handling**: Explicit error types, no `any` types
 - **Unused Variables**: Prefix with `_` (underscore) to indicate intentionally unused
-- **File Naming**: kebab-case for all files
+- **File Naming**: Services use dot notation (e.g., `auth.service.ts`), controllers use dot notation (e.g., `auth.controller.ts`), schemas use dot notation (e.g., `auth.schemas.ts`), other files use kebab-case
 - **Import Order**: Node modules → Local modules → Types
 - **Variable Destructuring**: Use `_` prefix for destructured variables that won't be used
 
@@ -219,61 +241,32 @@ module.exports = {
 
 ### Pre-commit Hooks Configuration
 
+Pre-commit hooks are configured with Husky and include optimizations for documentation-only commits.
+
 #### .husky/pre-commit
 
 ```bash
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Run lint-staged (handles linting and formatting)
+# Check if only .md files are being committed
+staged_files=$(git diff --cached --name-only)
+non_md_files=$(echo "$staged_files" | grep -v '\.md$' || true)
+
+# Always run lint-staged (handles formatting for all files including .md)
 npx lint-staged
+
+# Skip heavy checks if only .md files are being committed
+if [ -z "$non_md_files" ]; then
+  echo "Only .md files detected, skipping type-check and tests"
+  exit 0
+fi
 
 # Run type checking
 pnpm -r type-check
 
 # Run unit tests (fast feedback)
 pnpm --filter api test:unit
-```
-
-#### Individual App Scripts
-
-**apps/web/package.json:**
-
-```json
-{
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
-    "format": "prettier --write .",
-    "type-check": "tsc --noEmit",
-    "test": "jest",
-    "test:watch": "jest --watch"
-  }
-}
-```
-
-**apps/api/package.json:**
-
-```json
-{
-  "scripts": {
-    "dev": "tsx watch src/app.ts",
-    "build": "tsc",
-    "start": "node dist/app.js",
-    "lint": "eslint src/ --ext .ts",
-    "lint:fix": "eslint src/ --ext .ts --fix",
-    "format": "prettier --write .",
-    "type-check": "tsc --noEmit",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:unit": "jest --testPathPattern=tests/unit",
-    "test:integration": "jest --testPathPattern=tests/integration",
-    "test:coverage": "jest --coverage"
-  }
-}
 ```
 
 ## 🧪 Testing Strategy
@@ -295,18 +288,6 @@ pnpm --filter api test:unit
 - End-to-end tests: Test complete user workflows
 - Keep test files next to the code they test
 - Aim for 80%+ code coverage, but focus on critical paths
-
-## 🚨 Error Handling
-
-### Exception Best Practices
-
-### Logging Strategy
-
-## 🔧 Configuration Management
-
-### Environment Variables and Settings
-
-## 🏗️ Data Models and Validation
 
 ## 🔄 Git Workflow
 
@@ -421,14 +402,6 @@ const [first, , third] = array; // Middle element intentionally skipped
 const { password, ...userWithoutPassword } = user; // ESLint error
 ```
 
-### API Documentation
-
-## 🚀 Performance Considerations
-
-### Optimization Guidelines
-
-### Example Optimization
-
 ## 🛡️ Security Best Practices
 
 ### Security Guidelines
@@ -441,16 +414,6 @@ const { password, ...userWithoutPassword } = user; // ESLint error
 - Password hashing with bcrypt (12 salt rounds minimum)
 - Input validation with Zod schemas and XSS protection
 - Structured error responses without sensitive information leakage
-
-### Example Security Implementation
-
-## 🔍 Debugging Tools
-
-### Debugging Commands
-
-## 📊 Monitoring and Observability
-
-### Structured Logging
 
 ## 📚 Useful Resources
 

@@ -13,13 +13,13 @@ export const createHASchema = z.object({
         /^[a-zA-ZÀ-ÿĀ-žÐðÞþ0-9\s\-.,&()]+$/,
         'House association name contains invalid characters'
       )
-      .transform((name) => name.trim()),
+      .transform((name: string) => name.trim()),
 
     address: z
       .string()
       .min(1, 'Address is required')
       .max(500, 'Address is too long')
-      .transform((address) => address.trim()),
+      .transform((address: string) => address.trim()),
 
     registrationNum: z
       .string()
@@ -29,7 +29,7 @@ export const createHASchema = z.object({
         /^[0-9\-]+$/,
         'Registration number can only contain numbers and hyphens'
       )
-      .transform((num) => num.trim()),
+      .transform((num: string) => num.trim()),
   }),
 });
 
@@ -50,14 +50,14 @@ export const updateHASchema = z.object({
           /^[a-zA-ZÀ-ÿĀ-žÐðÞþ0-9\s\-.,&()]+$/,
           'House association name contains invalid characters'
         )
-        .transform((name) => name.trim())
+        .transform((name: string) => name.trim())
         .optional(),
 
       address: z
         .string()
         .min(1, 'Address is required')
         .max(500, 'Address is too long')
-        .transform((address) => address.trim())
+        .transform((address: string) => address.trim())
         .optional(),
 
       registrationNum: z
@@ -68,10 +68,10 @@ export const updateHASchema = z.object({
           /^[0-9\-]+$/,
           'Registration number can only contain numbers and hyphens'
         )
-        .transform((num) => num.trim())
+        .transform((num: string) => num.trim())
         .optional(),
     })
-    .refine((data) => Object.keys(data).length > 0, {
+    .refine((data: any) => Object.keys(data).length > 0, {
       message: 'At least one field must be provided for update',
     }),
 });
@@ -93,22 +93,22 @@ export const listHASchema = z.object({
     page: z
       .string()
       .optional()
-      .transform((val) => (val ? parseInt(val, 10) : 1))
-      .refine((val) => val > 0, 'Page must be greater than 0'),
+      .transform((val: string | undefined) => (val ? parseInt(val, 10) : 1))
+      .refine((val: number) => val > 0, 'Page must be greater than 0'),
 
     limit: z
       .string()
       .optional()
-      .transform((val) => (val ? parseInt(val, 10) : 10))
+      .transform((val: string | undefined) => (val ? parseInt(val, 10) : 10))
       .refine(
-        (val) => val > 0 && val <= 100,
+        (val: number) => val > 0 && val <= 100,
         'Limit must be between 1 and 100'
       ),
 
     search: z
       .string()
       .optional()
-      .transform((val) => (val ? val.trim() : undefined)),
+      .transform((val: string | undefined) => (val ? val.trim() : undefined)),
   }),
 });
 
@@ -124,7 +124,7 @@ export const addHAMemberSchema = z.object({
       .string()
       .min(1, 'Kennitala is required')
       .refine(
-        (kennitala) => {
+        (kennitala: string) => {
           // Remove any non-digit characters
           const cleaned = kennitala.replace(/\D/g, '');
 
@@ -141,7 +141,7 @@ export const addHAMemberSchema = z.object({
           message: 'Invalid kennitala format. Must be 10 digits (DDMMYY-NNCC)',
         }
       )
-      .transform((kennitala) => {
+      .transform((kennitala: string) => {
         // Remove any non-digit characters and return clean format
         return kennitala.replace(/\D/g, '');
       }),
@@ -169,15 +169,15 @@ export const listHAMembersSchema = z.object({
     page: z
       .string()
       .optional()
-      .transform((val) => (val ? parseInt(val, 10) : 1))
-      .refine((val) => val > 0, 'Page must be greater than 0'),
+      .transform((val: string | undefined) => (val ? parseInt(val, 10) : 1))
+      .refine((val: number) => val > 0, 'Page must be greater than 0'),
 
     limit: z
       .string()
       .optional()
-      .transform((val) => (val ? parseInt(val, 10) : 20))
+      .transform((val: string | undefined) => (val ? parseInt(val, 10) : 20))
       .refine(
-        (val) => val > 0 && val <= 100,
+        (val: number) => val > 0 && val <= 100,
         'Limit must be between 1 and 100'
       ),
   }),
@@ -199,7 +199,7 @@ export const registrationNumValidation = z
     /^[0-9\-]+$/,
     'Registration number can only contain numbers and hyphens'
   )
-  .transform((num) => num.trim());
+  .transform((num: string) => num.trim());
 
 /**
  * Common validation for HA names
@@ -212,7 +212,7 @@ export const haNameValidation = z
     /^[a-zA-ZÀ-ÿĀ-žÐðÞþ0-9\s\-.,&()]+$/,
     'House association name contains invalid characters'
   )
-  .transform((name) => name.trim());
+  .transform((name: string) => name.trim());
 
 /**
  * Common validation for addresses
@@ -221,7 +221,7 @@ export const addressValidation = z
   .string()
   .min(1, 'Address is required')
   .max(500, 'Address is too long')
-  .transform((address) => address.trim());
+  .transform((address: string) => address.trim());
 
 /**
  * Common kennitala validation for member operations
@@ -230,7 +230,7 @@ export const kennitalaMemberValidation = z
   .string()
   .min(1, 'Kennitala is required')
   .refine(
-    (kennitala) => {
+    (kennitala: string) => {
       // Remove any non-digit characters
       const cleaned = kennitala.replace(/\D/g, '');
 
@@ -247,7 +247,7 @@ export const kennitalaMemberValidation = z
       message: 'Invalid kennitala format. Must be 10 digits (DDMMYY-NNCC)',
     }
   )
-  .transform((kennitala) => {
+  .transform((kennitala: string) => {
     // Remove any non-digit characters and return clean format
     return kennitala.replace(/\D/g, '');
   });

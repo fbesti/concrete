@@ -103,11 +103,11 @@ pnpm type-check            # TypeScript check all packages
 ## 🗄️ **Database Commands**
 
 ```bash
-# Prisma operations
-pnpm --filter database db:generate    # Generate Prisma client
-pnpm --filter database db:migrate     # Run migrations
-pnpm --filter database db:studio      # Open Prisma Studio
-pnpm --filter database db:seed        # Seed database
+# Prisma operations (require DATABASE_URL environment variable)
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ha_management" pnpm --filter database db:generate    # Generate Prisma client
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ha_management" pnpm --filter database db:migrate     # Run migrations
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ha_management" pnpm --filter database db:studio      # Open Prisma Studio
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ha_management" pnpm --filter database db:seed        # Seed database
 ```
 
 ## 🐳 **Docker Commands**
@@ -142,7 +142,7 @@ pnpm --filter api remove express
 # First time setup
 cp apps/api/.env.example apps/api/.env  # Copy API environment file
 pnpm install                           # Install dependencies
-docker-compose up postgres -d          # Start database
+docker-compose up -d postgres          # Start database
 pnpm --filter database db:migrate      # Setup database
 pnpm --filter database db:seed         # Seed with test data
 ```
@@ -157,19 +157,22 @@ cp apps/api/.env.example apps/api/.env
 pnpm install
 
 # 3. Start database
-docker-compose up postgres -d
+docker-compose up -d postgres
 
 # 4. Setup database
-pnpm --filter database db:migrate
-pnpm --filter database db:seed
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ha_management" pnpm --filter database db:migrate
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ha_management" pnpm --filter database db:seed
 
 # 5. Start development
-pnpm --filter api dev    # Start API server
+pnpm --filter api dev      # Start API server
 # In another terminal:
-pnpm --filter web dev    # Start web app (when ready)
+pnpm --filter web dev      # Start web app (when ready)
 
 # 6. Test the API
 curl http://localhost:3001/health
+
+# 7. Test the login
+curl -X POST http://localhost:3001/api/v1/auth/login -H "Content-Type: application/json" -d '{"email": "manager1@ha.is", "password": "password123"}'
 ```
 
 ## 🌐 **Access URLs**
