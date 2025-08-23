@@ -1,13 +1,9 @@
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 
-// Load environment variables first
-dotenv.config();
-
-// Import and validate environment
+// Import and validate environment (dotenv loading happens in env.ts)
 import { env } from './config/env';
 
 // Import middleware
