@@ -235,47 +235,6 @@ pnpm -r type-check
 pnpm --filter api test:unit
 ```
 
-#### Individual App Scripts
-
-**apps/web/package.json:**
-
-```json
-{
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
-    "format": "prettier --write .",
-    "type-check": "tsc --noEmit",
-    "test": "jest",
-    "test:watch": "jest --watch"
-  }
-}
-```
-
-**apps/api/package.json:**
-
-```json
-{
-  "scripts": {
-    "dev": "tsx watch src/app.ts",
-    "build": "tsc",
-    "start": "node dist/app.js",
-    "lint": "eslint src/ --ext .ts",
-    "lint:fix": "eslint src/ --ext .ts --fix",
-    "format": "prettier --write .",
-    "type-check": "tsc --noEmit",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:unit": "jest --testPathPattern=tests/unit",
-    "test:integration": "jest --testPathPattern=tests/integration",
-    "test:coverage": "jest --coverage"
-  }
-}
-```
-
 ## 🧪 Testing Strategy
 
 ### Test-Driven Development (TDD)
@@ -295,18 +254,6 @@ pnpm --filter api test:unit
 - End-to-end tests: Test complete user workflows
 - Keep test files next to the code they test
 - Aim for 80%+ code coverage, but focus on critical paths
-
-## 🚨 Error Handling
-
-### Exception Best Practices
-
-### Logging Strategy
-
-## 🔧 Configuration Management
-
-### Environment Variables and Settings
-
-## 🏗️ Data Models and Validation
 
 ## 🔄 Git Workflow
 
@@ -421,14 +368,6 @@ const [first, , third] = array; // Middle element intentionally skipped
 const { password, ...userWithoutPassword } = user; // ESLint error
 ```
 
-### API Documentation
-
-## 🚀 Performance Considerations
-
-### Optimization Guidelines
-
-### Example Optimization
-
 ## 🛡️ Security Best Practices
 
 ### Security Guidelines
@@ -441,16 +380,6 @@ const { password, ...userWithoutPassword } = user; // ESLint error
 - Password hashing with bcrypt (12 salt rounds minimum)
 - Input validation with Zod schemas and XSS protection
 - Structured error responses without sensitive information leakage
-
-### Example Security Implementation
-
-## 🔍 Debugging Tools
-
-### Debugging Commands
-
-## 📊 Monitoring and Observability
-
-### Structured Logging
 
 ## 📚 Useful Resources
 
