@@ -272,15 +272,15 @@ export class UserService {
 
     // Convert array to object for easier consumption
     const roleStats = usersByRole.reduce(
-      (acc, item) => {
-        acc[item.role] = item._count._all;
+      (acc: Record<UserRole, number>, item: any) => {
+        acc[item.role as UserRole] = item._count._all;
         return acc;
       },
       {} as Record<UserRole, number>
     );
 
     // Ensure all roles are represented
-    Object.values(UserRole).forEach((role) => {
+    Object.values(UserRole).forEach((role: UserRole) => {
       if (!(role in roleStats)) {
         roleStats[role] = 0;
       }
@@ -358,7 +358,7 @@ export class UserService {
       },
     });
 
-    return memberships.map((membership) => ({
+    return memberships.map((membership: any) => ({
       id: membership.id,
       houseAssociation: membership.ha,
       joinedAt: membership.id, // Using membership ID as a proxy for join date

@@ -5,8 +5,10 @@
   "main": "dist/app.js",
   "scripts": {
     "dev": "tsx watch src/app.ts",
-    "build": "./node_modules/.pnpm/typescript@5.9.2/node_modules/typescript/bin/tsc",
+    "build": "tsc",
+    "build:docker": "tsc",
     "start": "node dist/app.js",
+    "postinstall": "npx prisma generate || echo 'Prisma generate skipped'",
     "lint": "eslint src/ --ext .ts",
     "lint:fix": "eslint src/ --ext .ts --fix",
     "format": "prettier --write .",
@@ -16,6 +18,9 @@
     "test:unit": "jest --testPathPattern=tests/unit",
     "test:integration": "jest --testPathPattern=tests/integration",
     "test:coverage": "jest --coverage"
+  },
+  "prisma": {
+    "schema": "../../packages/database/prisma/schema.prisma"
   },
   "dependencies": {
     "@prisma/client": "^5.2.0",
