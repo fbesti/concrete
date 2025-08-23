@@ -1,32 +1,12 @@
 {
   "mcpServers": {
-    "go-mcp": {
-      "command": "npx",
-      "args": [
-        "mcp-remote",
-        "https://gitmcp.io/golang/go/"
-      ]
-    },
     "typescript-mcp": {
       "command": "npx",
-      "args": [
-        "mcp-remote",
-        "https://gitmcp.io/microsoft/TypeScript/"
-      ]
-    },
-    "dotnet-mcp": {
-      "command": "npx",
-      "args": [
-        "mcp-remote",
-        "https://gitmcp.io/microsoft/dotnet/"
-      ]
+      "args": ["mcp-remote", "https://gitmcp.io/microsoft/TypeScript/"]
     },
     "pnpm-mcp": {
       "command": "npx",
-      "args": [
-        "mcp-remote",
-        "https://gitmcp.io/pnpm/pnpm/"
-      ]
+      "args": ["mcp-remote", "https://gitmcp.io/pnpm/pnpm/"]
     },
     "filesystem": {
       "command": "npx",
@@ -38,29 +18,18 @@
     },
     "terraform": {
       "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "hashicorp/terraform-mcp-server"
-      ]
+      "args": ["run", "-i", "--rm", "hashicorp/terraform-mcp-server"]
     },
     "memory-db": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-memory"
-      ],
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
       "env": {
         "MEMORY_FILE_PATH": "/home/freyr/homeprojects/concrete/memory-db.json"
       }
     },
     "memory-app": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-memory"
-      ],
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
       "env": {
         "MEMORY_FILE_PATH": "/home/freyr/homeprojects/concrete/memory-app.json"
       }
