@@ -98,6 +98,7 @@ Concrete House Association Management/
 │   ├── e2e/
 │   └── fixtures/
 ├── infrastructure/
+│   └── azure/                        # Terraform IaC code
 ├── docs/
 ├── .github/                          # GitHub Actions workflows
 │   └── workflows/
@@ -288,6 +289,14 @@ pnpm --filter api test:unit
 - End-to-end tests: Test complete user workflows
 - Keep test files next to the code they test
 - Aim for 80%+ code coverage, but focus on critical paths
+
+## 🚨 Error Handling
+
+- **Maintain consistent error handling** across the entire API
+- **Specific error messages** instead of generic failures
+- **Proper HTTP status codes** based on error types
+- **Better debugging** with meaningful error messages
+- **Reduced code duplication** - single source of truth for errors
 
 ## 🔄 Git Workflow
 

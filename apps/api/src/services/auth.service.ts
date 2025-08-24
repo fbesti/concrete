@@ -295,6 +295,18 @@ export class AuthService {
       where: { id: userId },
     });
   }
+
+  /**
+   * Get user by email (for secure logging purposes)
+   */
+  static async getUserByEmail(
+    email: string
+  ): Promise<{ id: string; email: string } | null> {
+    return prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true },
+    });
+  }
 }
 
 export default AuthService;

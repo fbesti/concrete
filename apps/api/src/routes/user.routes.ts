@@ -7,6 +7,7 @@ import {
   updateProfileSchema,
   changePasswordSchema,
 } from '../schemas/auth.schemas';
+import { UserIdParamSchema, UserQuerySchema } from '../schemas/params.schemas';
 
 const router: ExpressRouter = Router();
 
@@ -72,20 +73,36 @@ router.get(
  * @desc Get users list with filtering and pagination
  * @access Private (HA Manager only)
  */
-router.get('/', requireAuth, requireHAManager, userController.getUsers);
+router.get(
+  '/',
+  requireAuth,
+  requireHAManager,
+  validateRequest({ query: UserQuerySchema }),
+  userController.getUsers
+);
 
 /**
  * @route GET /api/v1/users/:userId
  * @desc Get user by ID
  * @access Private (Self or HA Manager)
  */
-router.get('/:userId', requireAuth, userController.getUserById);
+router.get(
+  '/:userId',
+  requireAuth,
+  validateRequest({ params: UserIdParamSchema }),
+  userController.getUserById
+);
 
 /**
  * @route DELETE /api/v1/users/:userId
  * @desc Delete user account
  * @access Private (Self or HA Manager)
  */
-router.delete('/:userId', requireAuth, userController.deleteUser);
+router.delete(
+  '/:userId',
+  requireAuth,
+  validateRequest({ params: UserIdParamSchema }),
+  userController.deleteUser
+);
 
 export default router;

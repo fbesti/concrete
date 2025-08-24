@@ -19,6 +19,7 @@ jest.mock('@prisma/client', () => {
     },
     houseAssociation: {
       findUnique: jest.fn(),
+      findFirst: jest.fn(),
       findMany: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
@@ -81,7 +82,7 @@ describe('HAService', () => {
         select: { id: true, role: true },
       });
 
-      expect(mockPrisma.houseAssociation.findUnique).toHaveBeenCalledWith({
+      expect(mockPrisma.houseAssociation.findFirst).toHaveBeenCalledWith({
         where: { registrationNum: validHAData.registrationNum },
       });
 
@@ -134,7 +135,7 @@ describe('HAService', () => {
 
     it('should throw error if registration number already exists', async () => {
       mockPrisma.user.findUnique.mockResolvedValue(mockUsers.manager1);
-      mockPrisma.houseAssociation.findUnique.mockResolvedValue(
+      mockPrisma.houseAssociation.findFirst.mockResolvedValue(
         mockHouseAssociations.ha1
       );
 
@@ -148,9 +149,10 @@ describe('HAService', () => {
 
     it('should handle database errors gracefully', async () => {
       mockPrisma.user.findUnique.mockRejectedValue(new Error('Database error'));
+      mockPrisma.houseAssociation.findFirst.mockResolvedValue(null);
 
       await expect(HAService.createHA(validHAData)).rejects.toThrow(
-        new ApiError(500, 'Failed to create house association')
+        new ApiError(500, 'Unexpected error: Database error')
       );
     });
   });
@@ -162,10 +164,13 @@ describe('HAService', () => {
         mockHAWithManager
       );
 
-      // Mock user has access (is manager)
-      const checkAccessSpy = jest
-        .spyOn(HAService, 'checkHAAccess')
-        .mockResolvedValue(true);
+      // Mock validation service
+      const {
+        HAValidationService,
+      } = require('../../../src/services/ha/ha-validation.service');
+      const validateAccessSpy = jest
+        .spyOn(HAValidationService, 'validateHAAccessForUser')
+        .mockResolvedValue(undefined);
 
       const result = await HAService.getHAById(
         mockHouseAssociations.ha1.id,
@@ -195,7 +200,7 @@ describe('HAService', () => {
         },
       });
 
-      expect(checkAccessSpy).toHaveBeenCalledWith(
+      expect(validateAccessSpy).toHaveBeenCalledWith(
         mockHouseAssociations.ha1.id,
         mockUsers.manager1.id,
         UserRole.HA_MANAGER
@@ -203,7 +208,7 @@ describe('HAService', () => {
 
       expect(result).toEqual(mockHAWithManager);
 
-      checkAccessSpy.mockRestore();
+      validateAccessSpy.mockRestore();
     });
 
     it('should throw error if HA not found', async () => {
@@ -467,13 +472,16 @@ describe('HAService', () => {
       };
 
       // Mock HA exists and user is manager
-      mockPrisma.houseAssociation.findUnique
-        .mockResolvedValueOnce({
-          id: mockHouseAssociations.ha1.id,
-          managerId: mockUsers.manager1.id,
-          registrationNum: mockHouseAssociations.ha1.registrationNum,
-        })
-        .mockResolvedValueOnce(mockHouseAssociations.ha2); // Conflict with existing HA
+      mockPrisma.houseAssociation.findUnique.mockResolvedValue({
+        id: mockHouseAssociations.ha1.id,
+        managerId: mockUsers.manager1.id,
+        registrationNum: mockHouseAssociations.ha1.registrationNum,
+      });
+
+      // Mock registration number conflict
+      mockPrisma.houseAssociation.findFirst.mockResolvedValue(
+        mockHouseAssociations.ha2
+      );
 
       await expect(
         HAService.updateHA(
@@ -493,13 +501,13 @@ describe('HAService', () => {
   describe('addMember', () => {
     it('should add member successfully', async () => {
       // Mock HA exists and user is manager
-      mockPrisma.houseAssociation.findUnique.mockResolvedValue({
+      mockPrisma.houseAssociation.findUnique.mockResolvedValueOnce({
         id: mockHouseAssociations.ha1.id,
         managerId: mockUsers.manager1.id,
       });
 
       // Mock user with kennitala exists
-      mockPrisma.user.findUnique.mockResolvedValue({
+      mockPrisma.user.findUnique.mockResolvedValueOnce({
         id: mockUsers.propertyOwner1.id,
         firstName: mockUsers.propertyOwner1.firstName,
         lastName: mockUsers.propertyOwner1.lastName,

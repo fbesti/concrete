@@ -13,6 +13,62 @@ export class ApiError extends Error {
       Error.captureStackTrace(this, this.constructor);
     }
   }
+
+  // Static factory methods for common error types
+  static badRequest(message: string): ApiError {
+    return new ApiError(400, message);
+  }
+
+  static unauthorized(message: string = 'Unauthorized access'): ApiError {
+    return new ApiError(401, message);
+  }
+
+  static forbidden(message: string = 'Access forbidden'): ApiError {
+    return new ApiError(403, message);
+  }
+
+  static notFound(message: string = 'Resource not found'): ApiError {
+    return new ApiError(404, message);
+  }
+
+  static conflict(message: string): ApiError {
+    return new ApiError(409, message);
+  }
+
+  static internal(message: string = 'Internal server error'): ApiError {
+    return new ApiError(500, message);
+  }
+}
+
+// Specific error classes extending ApiError
+export class ValidationError extends ApiError {
+  constructor(message: string) {
+    super(400, message);
+  }
+}
+
+export class NotFoundError extends ApiError {
+  constructor(message: string = 'Resource not found') {
+    super(404, message);
+  }
+}
+
+export class ConflictError extends ApiError {
+  constructor(message: string) {
+    super(409, message);
+  }
+}
+
+export class UnauthorizedError extends ApiError {
+  constructor(message: string = 'Unauthorized access') {
+    super(401, message);
+  }
+}
+
+export class ForbiddenError extends ApiError {
+  constructor(message: string = 'Access forbidden') {
+    super(403, message);
+  }
 }
 
 // Standard API response interface
