@@ -98,6 +98,7 @@ Concrete House Association Management/
 │   ├── e2e/
 │   └── fixtures/
 ├── infrastructure/
+│   └── azure/                        # Terraform IaC code
 ├── docs/
 ├── .github/                          # GitHub Actions workflows
 │   └── workflows/
