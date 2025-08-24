@@ -1,5 +1,6 @@
 import { PrismaClient, UserRole } from '@prisma/client';
 import { ApiError } from '../../utils/response';
+import { mapMembershipErrors } from '../../utils/prisma-error-mapper';
 
 const prisma = new PrismaClient();
 
@@ -108,7 +109,7 @@ export class HAMemberService {
       if (error instanceof ApiError) {
         throw error;
       }
-      throw new ApiError(500, 'Failed to add member to house association');
+      throw mapMembershipErrors(error);
     }
   }
 
@@ -168,7 +169,7 @@ export class HAMemberService {
       if (error instanceof ApiError) {
         throw error;
       }
-      throw new ApiError(500, 'Failed to remove member from house association');
+      throw mapMembershipErrors(error);
     }
   }
 
@@ -243,7 +244,7 @@ export class HAMemberService {
       if (error instanceof ApiError) {
         throw error;
       }
-      throw new ApiError(500, 'Failed to list house association members');
+      throw mapMembershipErrors(error);
     }
   }
 }

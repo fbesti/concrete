@@ -1,5 +1,6 @@
 import { PrismaClient, UserRole } from '@prisma/client';
 import { ApiError } from '../../utils/response';
+import { mapHouseAssociationErrors } from '../../utils/prisma-error-mapper';
 import { HAValidationService } from './ha-validation.service';
 import {
   HATransformerService,
@@ -53,7 +54,7 @@ export class HAService {
       if (error instanceof ApiError) {
         throw error;
       }
-      throw new ApiError(500, 'Failed to create house association');
+      throw mapHouseAssociationErrors(error);
     }
   }
 
@@ -83,7 +84,7 @@ export class HAService {
       if (error instanceof ApiError) {
         throw error;
       }
-      throw new ApiError(500, 'Failed to get house association');
+      throw mapHouseAssociationErrors(error);
     }
   }
 
@@ -124,7 +125,7 @@ export class HAService {
         ),
       };
     } catch (error) {
-      throw new ApiError(500, 'Failed to list house associations');
+      throw mapHouseAssociationErrors(error);
     }
   }
 
@@ -162,7 +163,7 @@ export class HAService {
       if (error instanceof ApiError) {
         throw error;
       }
-      throw new ApiError(500, 'Failed to update house association');
+      throw mapHouseAssociationErrors(error);
     }
   }
 
@@ -203,7 +204,7 @@ export class HAService {
       if (error instanceof ApiError) {
         throw error;
       }
-      throw new ApiError(500, 'Failed to delete house association');
+      throw mapHouseAssociationErrors(error);
     }
   }
 
