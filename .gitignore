@@ -4,7 +4,8 @@ MAlonzo/**
 node_modules
 apps/api/dist/
 apps/web/.next/
-packages/
+packages/database/dist
+packages/shared/dist
 *next-env.d.ts
 apps/web/tsconfig.tsbuildinfo
 .claude/notagents
