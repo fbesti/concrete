@@ -290,6 +290,14 @@ pnpm --filter api test:unit
 - Keep test files next to the code they test
 - Aim for 80%+ code coverage, but focus on critical paths
 
+## 🚨 Error Handling
+
+- **Maintain consistent error handling** across the entire API
+- **Specific error messages** instead of generic failures
+- **Proper HTTP status codes** based on error types
+- **Better debugging** with meaningful error messages
+- **Reduced code duplication** - single source of truth for errors
+
 ## 🔄 Git Workflow
 
 ### Branch Strategy
