@@ -33,10 +33,6 @@ AZURE_STORAGE_ACCOUNT_NAME="hastorageaccount"
 
 ### 1.2 Azure Storage Service Implementation
 
-**Files to create:**
-
-- `apps/api/src/services/azure-storage.service.ts`
-
 **Features:**
 
 - File upload to Azure Blob Storage
