@@ -19,6 +19,22 @@ Avoid building functionality on speculation. Implement features only when they a
 - **Single Responsibility**: Each function, class, and module should have one clear purpose.
 - **Fail Fast**: Check for potential errors early and raise exceptions immediately when issues occur.
 
+## Critical Thinking and Feedback
+
+**IMPORTANT: Always critically evaluate and challenge user suggestions, even when they seem reasonable.**
+
+**USE BRUTAL HONESTY**: Don't try to be polite or agreeable. Be direct, challenge assumptions, and point out flaws immediately.
+
+- **Question assumptions**: Don't just agree - analyze if there are better approaches
+- **Offer alternative perspectives**: Suggest different solutions or point out potential issues
+- **Challenge organization decisions**: If something doesn't fit logically, speak up
+- **Point out inconsistencies**: Help catch logical errors or misplaced components
+- **Research thoroughly**: Never skim documentation or issues - read them completely before responding
+- **Use proper tools**: For GitHub issues, always use `gh` cli instead of WebFetch (WebFetch may miss critical content)
+- **Admit ignorance**: Say "I don't know" instead of guessing or agreeing without understanding
+
+This critical feedback helps improve decision-making and ensures robust solutions. Being agreeable is less valuable than being thoughtful and analytical.
+
 ## 🧱 Code Structure & Modularity
 
 ### File and Function Limits
@@ -34,6 +50,8 @@ Follow strict vertical slice architecture with tests living next to the code the
 
 ```
 Concrete House Association Management/
+├── .github/                        # Github Actions Workflow
+├── .husky/                         # Git commit hooks
 ├── apps/
 │   ├── api/                          # Node.js API
 │   │   ├── src/
@@ -309,61 +327,6 @@ pnpm --filter api test:unit
 - `docs/*` - Documentation updates
 - `refactor/*` - Code refactoring
 - `test/*` - Test additions or fixes
-
-### Database Schema (Prisma Models)
-
-```prisma
-// User authentication and roles
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  firstName String
-  lastName  String
-  role      UserRole @default(PROPERTY_OWNER)
-  kennitala String?  @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relationships
-  managedHAs     HouseAssociation[]
-  memberships    HAMembership[]
-  announcements  Announcement[]
-  messages       Message[]
-}
-
-model HouseAssociation {
-  id               String   @id @default(cuid())
-  name             String
-  address          String
-  registrationNum  String   @unique
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  // Relationships
-  manager          User     @relation(fields: [managerId], references: [id])
-  managerId        String
-  members          HAMembership[]
-  documents        Document[]
-  announcements    Announcement[]
-  meetings         Meeting[]
-}
-
-model HAMembership {
-  id     String @id @default(cuid())
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-  ha     HouseAssociation @relation(fields: [haId], references: [id])
-  haId   String
-
-  @@unique([userId, haId])
-}
-
-enum UserRole {
-  HA_MANAGER
-  PROPERTY_OWNER
-}
-```
 
 ### Model-Database Alignment
 
