@@ -50,6 +50,8 @@ Follow strict vertical slice architecture with tests living next to the code the
 
 ```
 Concrete House Association Management/
+├── .github/                        # Github Actions Workflow
+├── .husky/                         # Git commit hooks
 ├── apps/
 │   ├── api/                          # Node.js API
 │   │   ├── src/
