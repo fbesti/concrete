@@ -81,7 +81,7 @@ jobs:
   opentofu_apply:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [setup, verify_backend]
-    uses: fbesti/ot-azure/.github/workflows/reusable-opentofu-apply.yaml
+    uses: fbesti/ot-azure/.github/workflows/reusable-opentofu-apply.yaml@main
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
