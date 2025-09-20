@@ -5,10 +5,10 @@ resource "azurerm_resource_group" "resource_group" {
 
 resource "azurerm_storage_account" "storage_account" {
   name                     = "storageaccountname"
-  resource_group_name      = azurerm_resource_group.example.name
-  location                 = azurerm_resource_group.example.location
+  resource_group_name      = var.storage_account_name
+  location                 = var.location
   account_tier             = "Standard"
-  account_replication_type = "GRS"
+  account_replication_type = "LSR"
 
   tags = {
     environment = "staging"
