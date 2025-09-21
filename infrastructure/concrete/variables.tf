@@ -19,3 +19,15 @@ variable "storage_account_name" {
     error_message = "Storage account name must be 3-24 characters, lowercase letters and numbers only."
   }
 }
+
+variable "allowed_ip_addresses" {
+  description = "List of IP addresses allowed to access the storage account"
+  type        = list(string)
+  validation {
+    condition = alltrue([
+      for ip in var.allowed_ip_addresses :
+      can(cidrhost(ip, 0)) || can(regex("^\\d+\\.\\d+\\.\\d+\\.\\d+$", ip))
+    ])
+    error_message = "All allowed_ip_addresses must be valid IP addresses or CIDR blocks."
+  }
+}
