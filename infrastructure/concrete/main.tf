@@ -12,7 +12,7 @@ resource "azurerm_storage_account" "storage_account" {
   network_rules {
     default_action = "Deny"
     bypass         = ["AzureServices"]
-    ip_rules       = ["213.190.122.9/32"]
+    ip_rules       = ["213.190.122.9"]
   }
   tags = {
     environment = "mvp"
