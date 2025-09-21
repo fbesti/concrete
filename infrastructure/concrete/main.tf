@@ -16,6 +16,6 @@ resource "azurerm_storage_account" "storage_account" {
 }
 resource "azurerm_storage_container" "documents" {
   name                  = "documents"
-  storage_account_id  = azurerm_storage_account.storage_account.id
+  storage_account_id    = azurerm_storage_account.storage_account.id
   container_access_type = "blob"
 }

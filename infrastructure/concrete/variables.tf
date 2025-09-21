@@ -11,7 +11,7 @@ variable "resource_group_name" {
 }
 
 variable "storage_account_name" {
-    description = "The name of the storage account."
+  description = "The name of the storage account."
   type        = string
-  default = "stconcrete8s9kskowks"
+  default     = "stconcrete8s9kskowks"
 }
