@@ -9,13 +9,17 @@ resource "azurerm_storage_account" "storage_account" {
   location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-
+  network_rules {
+    default_action = "Deny"
+    bypass         = ["AzureServices"]
+    ip_rules       = ["213.190.122.9/32"]
+  }
   tags = {
-    environment = "staging"
+    environment = "mvp"
   }
 }
 resource "azurerm_storage_container" "documents" {
   name                  = "documents"
   storage_account_id    = azurerm_storage_account.storage_account.id
-  container_access_type = "blob"
+  container_access_type = "private"
 }
