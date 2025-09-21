@@ -17,9 +17,11 @@ resource "azurerm_storage_account" "storage_account" {
   tags = {
     environment = "mvp"
   }
+  depends_on = [ azurerm_resource_group.resource_group ]
 }
 resource "azurerm_storage_container" "documents" {
   name                  = "documents"
   storage_account_id    = azurerm_storage_account.storage_account.id
   container_access_type = "private"
+  depends_on = [ azurerm_storage_account.storage_account ]
 }
