@@ -23,5 +23,12 @@ variable "storage_account_name" {
 variable "allowed_ip_addresses" {
   description = "List of IP addresses allowed to access the storage account"
   type        = list(string)
-  default     = ["213.190.122.9"]
+  default     = ["0.0.0.0"]
+  validation {
+    condition = alltrue([
+      for ip in var.allowed_ip_addresses :
+      can(cidrhost(ip, 0)) || can(regex("^\\d+\\.\\d+\\.\\d+\\.\\d+$", ip))
+    ])
+    error_message = "All allowed_ip_addresses must be valid IP addresses or CIDR blocks."
+  }
 }

@@ -37,6 +37,7 @@ jobs:
       AZURE_SA_KIND: ${{ vars.AZURE_SA_KIND }}
       AZURE_SA_TIER: ${{ vars.AZURE_SA_TIER }}
       CLOUD_ENVIRONMENT: ${{ vars.CLOUD_ENVIRONMENT }}
+      ALLOWED_IP_ADDRESS: ${{ secrets.ALLOWED_IP_ADDRESS}}
     steps:
       - name: Output environment variables
         run: echo "Sourced variables from the ${{ vars.CLOUD_ENVIRONMENT }} environment."
@@ -64,11 +65,13 @@ jobs:
   opentofu_plan:
     if: github.event_name == 'pull_request'
     needs: [setup, verify_backend]
-    uses: fbesti/ot-azure/.github/workflows/reusable-opentofu-plan.yaml@main
+    uses: fbesti/ot-azure/.github/workflows/reusable-opentofu-plan.yaml@feature/opentofu-secret-variables
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      TF_VAR_SECRET: |
+        -var=allowed_ip_addresses=${{ needs.setup.outputs.ALLOWED_IP_ADDRESS }}
     with:
       CLOUD_ENVIRONMENT: ${{ needs.setup.outputs.CLOUD_ENVIRONMENT }}
       TF_STATE_RG: ${{ needs.setup.outputs.TF_STATE_RG }}
