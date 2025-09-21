@@ -5,6 +5,7 @@
 staged_files=$(git diff --cached --name-only)
 non_md_files=$(echo "$staged_files" | grep -v '\.md$' || true)
 non_tf_files=$(echo "$staged_files" | grep -v '\.tf$' || true)
+non_yml_files=$(echo "$staged_files" | grep -v '\.yml$' || true)
 # Always run lint-staged (handles formatting for all files including .md)
 npx lint-staged
 
@@ -19,6 +20,10 @@ if [ -z "$non_tf_files" ]; then
   exit 0
 fi
 
+if [ -z "$non_yml_files" ]; then
+  echo "Only .tf files detected, skipping type-check and tests"
+  exit 0
+fi
 
 # Run type checking
 pnpm -r type-check
